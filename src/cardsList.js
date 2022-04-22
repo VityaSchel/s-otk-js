@@ -4,8 +4,9 @@ export default class SOTKCardsList {
     const cards = root
       .querySelectorAll('#cardslist span.getcardinfo')
       .map(cardElement => ({
-        cardNumber: cardElement.innerText,
+        number: cardElement.innerText,
         getInfo: () => this.getCardInfo(cardElement.innerText),
+        getHistory: (startDate, endDate) => this.getHistory(cardElement.innerText, startDate, endDate),
         delete: () => this.deleteCard(cardElement.innerText)
       }))
     return cards

@@ -12,7 +12,6 @@ export default class SOTKHistory {
       startday: format(startDate, 'yyyy-M-d'),
       endday: format(endDate, 'yyyy-M-d'),
     }, true)
-    const operationsHistory = JSON.parse(historyResponse.data)
-    return operationsHistory
+    return historyResponse.data
   }
 }

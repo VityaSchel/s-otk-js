@@ -74,8 +74,9 @@ type|string|Неизвестно
 
 Ключ|Тип|Описание
 ---|---|---
-cardNumber|string (cast to number)|Номер карты
+number|string (cast to number)|Номер карты
 getInfo|function|Метод для получения информации о карте, например баланс
+getHistory|function|Метод для получения истории карты
 delete|function|Метод для удаления карты из аккаунта
 
 ### addCard(cardID: number): Promise<string>
@@ -212,7 +213,7 @@ balance token и pid можно найти в HTML коде страницы, в
 
 ## Примеры
 
-### Вывод баланса карты
+### Вывод баланса карт
 
 ```js
 import SOTKAPI from 's-otk-js'
@@ -226,6 +227,25 @@ const cardsInfo = await Promise.all(
 )
 console.log('Баланс ваших карт:')
 cardsInfo.forEach(card => console.log(card.short + ': ' + card.balance))
+```
+
+### Вывод историй операций карт
+
+```js
+import SOTKAPI from 's-otk-js'
+
+const SOTK = new SOTKAPI()
+await SOTK.login({ username: 'bear-frede', password: '28.08.2020' })
+
+const cards = await SOTK.getCards()
+const cardsHistories = await Promise.all(
+  cards.map(async card => [card.number, await card.getHistory(new Date('2022-02-22'))])
+)
+console.log('Истории ваших карт:')
+cardsHistories.forEach(card => {
+  console.log(card[0])
+  console.log(card[1])
+})
 ```
 
 ## Contributing
