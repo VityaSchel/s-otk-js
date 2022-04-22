@@ -40,9 +40,12 @@ await SOTK.getAccountInfo()
 ### Interface AccountInfo
 
 Ключ|Тип|Описание
----|---
+---|---|---
 root|node-html-parser:HTMLElement|Корень страницы
 balance|object\<token, pid\>|Токены для запроса баланса
+delCard|object\<token, pid\>|
+addCard|object\<token, pid\>|
+history|object\<token, pid\>|
 
 ### getCardInfo(cardID: number): Promise<CardInfo>
 
@@ -53,7 +56,7 @@ balance|object\<token, pid\>|Токены для запроса баланса
 Объект с информацией про проездную карту
 
 Ключ|Тип|Описание
----|---
+---|---|---
 short|string (cast to number)|Строка с номером карты, может содержать нули в начале
 ctg|number|Неизвестно
 ctgdesc|string|Описание, например "Карта Школьника"
@@ -68,6 +71,12 @@ type|string|Неизвестно
 ### Interface Card
 
 Карта, добавленная пользователем.
+
+Ключ|Тип|Описание
+---|---|---
+cardNumber|string (cast to number)|Номер карты
+getInfo|function|Метод для получения информации о карте, например баланс
+delete|function|Метод для удаления карты из аккаунта
 
 ## Коллекция Postman
 
@@ -128,7 +137,12 @@ content-type: application/x-www-form-urlencoded; charset=UTF-8
 
 Номер операции (ключ operation)|Описание
 ---|---
+1|Добавление карты
+2|Удаление карты
+3|Получение истории поездок
 6|Получение информации о карте
+
+#### Получение информации о карте (6)
 
 Для того, чтобы запросить информацию о карте, нужно сделать запрос на вышеуказанный URL с телом:
 
@@ -147,3 +161,41 @@ balance token и pid можно найти в HTML коде страницы, в
 
 {"success":true,"message":null,"messages":null,"data":"{\"short\":\"01234567\",\"ctg\":10,\"ctgdesc\":\"\\u041a\\u0430\\u0440\\u0442\\u0430 \\u0428\\u043a\\u043e\\u043b\\u044c\\u043d\\u0438\\u043a\\u0430\",\"balance\":\"228.12\",\"st_limit\":null,\"type\":\"EP\"}"}
 ```
+
+#### Добавление карты (1)
+
+Возвращается что-то из следующего: `Неверный номер карты`, `Карта 123456789 в базе не найдена`, `Карта 123456789 прикреплена`
+
+#### Удаление карты (2)
+
+Всегда возвращается "Функция базы данных сработала без ошибок", даже если карты на аккаунте нет или ее вообще не существует :unamused:
+
+#### Получение истории поездок (3)
+
+В теле запроса указывается дата в формате YYYY-M-D. Обратите внимание, что нулей в начале быть не должно! Даты стоит указывать в ключах startday и endday. 
+
+## Примеры
+
+### Вывод баланса карты
+
+```js
+import SOTKAPI from 's-otk-js'
+
+const SOTK = new SOTKAPI()
+await SOTK.login({ username: 'markov-alexey', password: '12345678' })
+
+const cards = await SOTK.getCards()
+const cardsInfo = await Promise.all(
+  cards.map(card => card.getInfo())
+)
+console.log('Баланс ваших карт:')
+cardsInfo.forEach(card => console.log(card.short + ': ' + card.balance))
+```
+
+## Contributing
+
+Не стоит.
+
+## Licensing
+
+[MIT](./LICENSE)
