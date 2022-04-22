@@ -19,7 +19,7 @@ await SOTK.login({ username, password })
 
 ## Документация
 
-### login({ username: string, password: string }): Promise
+### login({ username: string, password: string }): Promise<{ sessionToken, authToken, csrfToken }>
 
 Вход в аккаунт, используя логин и пароль. Этот метод обязательно должен быть вызван перед любыми другими методами. Альтернативно, вы можете напрямую установить токен, используя свойство `credentials` на экземпляре класса SOTKAPI:
 
@@ -27,7 +27,7 @@ await SOTK.login({ username, password })
 SOTK.credentials = { token: 'zYQgRaCky9Ca9EFMTJjUNUTgkN', csrfToken: 'd2fd482bcd8a578e0dd129f25651f0d2' }
 ```
 
-### getAccountInfo(): Promise<>
+### getAccountInfo(): Promise<AccountInfo>
 
 Этот метод используется внутри других методов и скорее всего никогда не понадобится вам. Он нужен лишь для того, чтобы обновить информацию об аккаунте для таких методов, как, например, getCards. Он вызывается один раз и после чего результат кешируется в свойстве `accountInfo` в экземпляре класса. Если вы хотите обновить информацию для других методов, например поездки, его стоит вызвать следующим образом:
 
