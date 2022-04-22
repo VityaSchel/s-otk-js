@@ -55,6 +55,23 @@ class SOTKBase {
     this.accountInfo = { root, balance, delCard, addCard, history }
     return this.accountInfo
   }
+
+  async runOperation(body, parseJSON = false) {
+    const response = await this.fetch('https://s-otk.ru/index.php/index.php?option=com_ajax&module=lkabinet&format=json', {
+      method: 'POST',
+      body: new URLSearchParams(body)
+    })
+
+    const responseText = (await response.text()).trim()
+    if (responseText === 'Ошибка запроса:') throw new Error('Card ID not found')
+
+    if (parseJSON) {
+      const operationResult = JSON.parse(responseText)
+      return operationResult
+    } else {
+      return responseText
+    }
+  }
 }
 
 export default class SOTK extends aggregation(

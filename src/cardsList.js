@@ -14,12 +14,13 @@ export default class SOTKCardsList {
   async getCardInfo(cardID) {
     const { balance } = await this.getAccountInfo()
 
-    const cardInfo = await this.runOperation({
+    const cardInfoResponse = await this.runOperation({
       operation: 6,
       card: cardID,
       [balance.token]: 1,
       pid: [balance.pid]
     }, true)
+    const cardInfo = JSON.parse(cardInfoResponse.data)
     return cardInfo
   }
 
@@ -45,23 +46,5 @@ export default class SOTKCardsList {
       pid: [delCard.pid]
     })
     return cardDeletion
-  }
-
-  async runOperation(body, parseJSON = false) {
-    const response = await this.fetch('https://s-otk.ru/index.php/index.php?option=com_ajax&module=lkabinet&format=json', {
-      method: 'POST',
-      body: new URLSearchParams(body)
-    })
-
-    const responseText = (await response.text()).trim()
-    if (responseText === 'Ошибка запроса:') throw new Error('Card ID not found')
-
-    if (parseJSON) {
-      const cardInfoResponse = JSON.parse(responseText)
-      const operationResult = JSON.parse(cardInfoResponse.data)
-      return operationResult
-    } else {
-      return responseText
-    }
   }
 }

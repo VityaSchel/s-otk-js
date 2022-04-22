@@ -8,4 +8,5 @@ SOTK.credentials.token = process.env.SOTK_TOKEN
 
 // const cards = await SOTK.getCards()
 // console.log(await cards[0].delete())
-console.log(await SOTK.addCard(110000000))
+// console.log(await SOTK.addCard(110000000))
+console.log(await SOTK.getHistory(100249727, new Date('2022-02-22')))
