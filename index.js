@@ -2,6 +2,7 @@ import { aggregation } from './src/utils.js'
 import SOTKLogin from './src/login.js'
 import SOTKCardsList from './src/cardsList.js'
 import SOTKHistory from './src/history.js'
+import SOTKInvoices from './src/invoices.js'
 import nodefetch, { Headers } from 'node-fetch'
 import cookie from 'cookie'
 import { parse } from 'node-html-parser'
@@ -78,5 +79,6 @@ export default class SOTK extends aggregation(
   SOTKBase,
   SOTKLogin,
   SOTKCardsList,
-  SOTKHistory
+  SOTKHistory,
+  SOTKInvoices
 ) { }
