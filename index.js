@@ -19,7 +19,9 @@ class SOTKBase {
     return nodefetch(url, options)
   }
 
-  async getAccountInfo() {
+  async getAccountInfo(useCache = false) {
+    if (this.accountInfo && useCache) return this.accountInfo
+
     const response = await this.fetch('https://s-otk.ru/index.php/passengerlk')
     const accountInfo = await response.text()
     const root = parse(accountInfo)
@@ -29,7 +31,8 @@ class SOTKBase {
       pid: balanceForm.querySelector('#balance_pid').getAttribute('name'),
     }
 
-    return { balance }
+    this.accountInfo = { root, balance }
+    return this.accountInfo
   }
 }
 

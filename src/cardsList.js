@@ -1,4 +1,15 @@
 export default class SOTKCardsList {
+  async getCards() {
+    const { root } = await this.getAccountInfo()
+    const cards = root
+      .querySelectorAll('#cardslist span.getcardinfo')
+      .map(cardElement => ({
+        cardNumber: cardElement.innerText,
+        getInfo: this.getCardInfo(cardElement.innerText)
+      }))
+    return cards
+  }
+
   async getCardInfo(cardID) {
     const { balance } = await this.getAccountInfo()
 
@@ -11,7 +22,7 @@ export default class SOTKCardsList {
         pid: [balance.pid]
       })
     })
-    
+
     const responseText = (await response.text()).trim()
     if (responseText === 'Ошибка запроса:') throw new Error('Card ID not found')
 
