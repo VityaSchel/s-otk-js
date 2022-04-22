@@ -4,8 +4,10 @@ import cookie from 'cookie'
 
 export default class SOTKLogin {
   async login({ username, password }) {
-    const { sessionToken, authToken } = await startSession()
+    const session = await startSession()
+    const { sessionToken, authToken, csrfToken } = session
     this.credentials.token = sessionToken
+    this.credentials.csrfToken = csrfToken
     const response = await fetch('https://s-otk.ru/index.php/passengerlk', {
       method: 'POST',
       body: new URLSearchParams({
@@ -17,17 +19,23 @@ export default class SOTKLogin {
         [authToken]: 1
       })
     })
-    console.log(response.headers, response.cookies, await response.text())
+    return session
   }
 }
 
 async function startSession() {
   const response = await fetch(`https://s-otk.ru/index.php/passengerlk`)
   const loginPage = await response.text()
-  const authToken = parse(loginPage)
+  const root = parse(loginPage)
+  const authToken = root
     .querySelector('form[action="/index.php/passengerlk"] > input[type="hidden"][value="1"]')
-    .getAttribute('value')
-  const cookies = cookie.parse(response.cookies)
+    .getAttribute('name')
+  const cookies = cookie.parse(response.headers.get('set-cookie'))
   const sessionToken = cookies['fb60ded04faae990cc1fc4ed1921fc75']
-  return { sessionToken, authToken }
+  const ssrJSONRaw = root
+    .querySelector('head > script[type="application/json"]')
+    .innerHTML
+  const ssrJSON = JSON.parse(ssrJSONRaw)
+  const csrfToken = ssrJSON['csrf.token']
+  return { sessionToken, authToken, csrfToken }
 }

@@ -24,7 +24,7 @@ await SOTK.login({ username, password })
 Вход в аккаунт, используя логин и пароль. Этот метод обязательно должен быть вызван перед любыми другими методами. Альтернативно, вы можете напрямую установить токен, используя свойство `credentials` на экземпляре класса SOTKAPI:
 
 ```javascript
-SOTK.credentials = { token: 'd2fd482bcd8a578e0dd129f25651f0d2' }
+SOTK.credentials = { token: 'zYQgRaCky9Ca9EFMTJjUNUTgkN', csrfToken: 'd2fd482bcd8a578e0dd129f25651f0d2' }
 ```
 
 ## Коллекция Postman
@@ -71,5 +71,5 @@ return: aW5kZXgucGhwP0l0ZW1pZD0xMTk=
 653c2cb89d31dd41d2c0a7e1f326fdd1: 1
 ```
 
-Вернется http-код 303, если в заголовке Location видим https://s-otk.ru/index.php/passengerlk и в файле куки токен, то все правильно, если нет — что-то напутали.
+Вернется http-код 303, если в заголовке Location видим /index.php/passengerlk и в файле куки токен, `joomla_user_state`=`logged_in` то все правильно, если нет — что-то напутали.
 
