@@ -27,6 +27,23 @@ await SOTK.login({ username, password })
 SOTK.credentials = { token: 'zYQgRaCky9Ca9EFMTJjUNUTgkN', csrfToken: 'd2fd482bcd8a578e0dd129f25651f0d2' }
 ```
 
+### getCardInfo(cardID: number): Promise<CardInfo>
+
+Получение информации о карте, используя её номер (напечатан на обратной стороне). Если карта не найдена, метод завершается ошибкой "Card ID not found".
+
+### Interface CardInfo
+
+Объект с информацией про проездную карту
+
+Ключ|Тип|Описание
+---|---
+short|string (cast to number)|Строка с номером карты, может содержать нули в начале
+ctg|number|Неизвестно
+ctgdesc|string|Описание, например "Карта Школьника"
+balance|string (cast to number)|Строка, содержащая баланс карты, дробная часть отделяется точкой
+st_limit|null|Неизвестно
+type|string|Неизвестно
+
 ## Коллекция Postman
 
 Для удобства я также создал коллекцию в Postman: <https://www.getpostman.com/collections/62ef370751fdab25a1d1>
@@ -58,7 +75,7 @@ task|должен быть user.login
 return|хз
 [formToken]|должен быть 1
 
-formToken — токен который можно найти в форме на странице https://s-otk.ru/index.php/passengerlk. Сама форма генерируется на сервере и пока нет способа получить его по-другому. Скорее всгео, это должен был быть csrf-token но он не совпадает с токеном в теге script в head.
+formToken — токен который можно найти в форме на странице https://s-otk.ru/index.php/passengerlk. Сама форма генерируется на сервере и пока нет способа получить его по-другому. Скорее всгео, это должен был быть csrf-token но он не всегда совпадает с токеном в теге script в head.
 
 Пример:
 ```
@@ -73,3 +90,17 @@ return: aW5kZXgucGhwP0l0ZW1pZD0xMTk=
 
 Вернется http-код 303, если в заголовке Location видим /index.php/passengerlk и в файле куки токен, `joomla_user_state`=`logged_in` то все правильно, если нет — что-то напутали.
 
+### Получение любой информации об аккаунте
+
+Вся информация находится на странице https://s-otk.ru/index.php/passengerlk, там же где и вход и API-endpoint :poop:
+
+Операции совершаются по следующему адресу: 
+
+```
+GET https://s-otk.ru/index.php/index.php?option=com_ajax&module=lkabinet&format=json
+content-type: application/x-www-form-urlencoded; charset=UTF-8
+```
+
+Номер операции (ключ operation)|Описание
+---|---
+6|Получение информации о карте

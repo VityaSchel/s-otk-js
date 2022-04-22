@@ -8,7 +8,7 @@ export default class SOTKLogin {
     const { sessionToken, authToken, csrfToken } = session
     this.credentials.token = sessionToken
     this.credentials.csrfToken = csrfToken
-    const response = await fetch('https://s-otk.ru/index.php/passengerlk', {
+    await fetch('https://s-otk.ru/index.php/passengerlk', {
       method: 'POST',
       body: new URLSearchParams({
         username, password,
@@ -24,7 +24,7 @@ export default class SOTKLogin {
 }
 
 async function startSession() {
-  const response = await fetch(`https://s-otk.ru/index.php/passengerlk`)
+  const response = await fetch('https://s-otk.ru/index.php/passengerlk')
   const loginPage = await response.text()
   const root = parse(loginPage)
   const authToken = root
