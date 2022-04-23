@@ -19,7 +19,7 @@ await SOTK.login({ username, password })
 
 ## Документация
 
-### login({ username: string, password: string }): Promise<{ sessionToken, authToken, csrfToken }>
+### login({ username: string, password: string }): Promise\<{ sessionToken, authToken, csrfToken }\>
 
 Вход в аккаунт, используя логин и пароль. Этот метод обязательно должен быть вызван перед любыми другими методами. Альтернативно, вы можете напрямую установить токен, используя свойство `credentials` на экземпляре класса SOTKAPI:
 
@@ -27,7 +27,7 @@ await SOTK.login({ username, password })
 SOTK.credentials = { token: 'zYQgRaCky9Ca9EFMTJjUNUTgkN', csrfToken: 'd2fd482bcd8a578e0dd129f25651f0d2' }
 ```
 
-### getAccountInfo(): Promise<AccountInfo>
+### getAccountInfo(): Promise\<AccountInfo\>
 
 Этот метод используется внутри других методов и скорее всего никогда не понадобится вам. Он нужен лишь для того, чтобы обновить информацию об аккаунте для таких методов, как, например, getCards. Он вызывается один раз и после чего результат кешируется в свойстве `accountInfo` в экземпляре класса. Если вы хотите обновить информацию для других методов, например поездки, его стоит вызвать следующим образом:
 
@@ -47,7 +47,7 @@ delCard|object\<token, pid\>|
 addCard|object\<token, pid\>|
 history|object\<token, pid\>|
 
-### getCardInfo(cardID: number): Promise<CardInfo>
+### getCardInfo(cardID: number): Promise\<CardInfo\>
 
 Получение информации о карте, используя её номер (напечатан на обратной стороне). Если карта не найдена, метод завершается ошибкой "Card ID not found".
 
@@ -64,7 +64,7 @@ balance|string (cast to number)|Строка, содержащая баланс 
 st_limit|null|Неизвестно
 type|string|Неизвестно
 
-### getCards(): Promise<Array<Card>>
+### getCards(): Promise\<Array\<Card\>\>
 
 Получение всех добавленных пользователем карт. Также возвращаются полезные методы, см. интерфейс Card.
 
@@ -79,15 +79,15 @@ getInfo|function|Метод для получения информации о к
 getHistory|function|Метод для получения истории карты
 delete|function|Метод для удаления карты из аккаунта
 
-### addCard(cardID: number): Promise<string>
+### addCard(cardID: number): Promise\<string\>
 
 Добавление новой карты в аккаунт. См. ниже (раздел "Добавление карты (1)"), какие могут быть ответы.
 
-### deleteCard(cardID: number): Promise<string>
+### deleteCard(cardID: number): Promise\<string\>
 
 Удаление новой карты из аккаунта. См. ниже (раздел "Удаление карты (2)"), какие могут быть ответы.
 
-### getHistory(cardID: number, startDate: Date, endDate: Date): Promise<Array<HistoryOperation>>
+### getHistory(cardID: number, startDate: Date, endDate: Date): Promise\<Array\<HistoryOperation\>\>
 
 Получение истории операций по карте, начиная с startDate и заканчивая endDate. Обновляется раз в сутки, скорее всего в полночь по Самарскому времени, но это неизвестно. 
 
@@ -102,7 +102,7 @@ sum|string (cast to number)|Сумма транзакции, дробная ча
 code|string (cast to number)|Номер маршрута
 vichle|string (cast to number)|Тип поездки, полностью указаны ниже
 
-### createInvoice(cardID: number, sum: number): Promise<formUrl: string>
+### createInvoice(cardID: number, sum: number): Promise\<formUrl: string\>
 
 Создание инвойса для пополнения карты, возвращается formURL, который можно открыть в браузере для оплаты в шлюзе сбербанка.
 
@@ -174,7 +174,7 @@ return: aW5kZXgucGhwP0l0ZW1pZD0xMTk=
 Операции совершаются по следующему адресу: 
 
 ```
-GET https://s-otk.ru/index.php/index.php?option=com_ajax&module=lkabinet&format=json
+POST https://s-otk.ru/index.php/index.php?option=com_ajax&module=lkabinet&format=json
 content-type: application/x-www-form-urlencoded; charset=UTF-8
 ```
 
