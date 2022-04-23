@@ -24,8 +24,16 @@ await SOTK.login({ username, password })
 Вход в аккаунт, используя логин и пароль. Этот метод обязательно должен быть вызван перед любыми другими методами. Альтернативно, вы можете напрямую установить токен, используя свойство `credentials` на экземпляре класса SOTKAPI:
 
 ```javascript
-SOTK.credentials = { token: 'zYQgRaCky9Ca9EFMTJjUNUTgkN', csrfToken: 'd2fd482bcd8a578e0dd129f25651f0d2' }
+SOTK.credentials = { 
+  token: 'zYQgRaCky9Ca9EFMTJjUNUTgkN', 
+  authToken: 'HGrpB9KWRnRRNKrsY8jdfvesBl75xb5D',
+  csrfToken: 'd2fd482bcd8a578e0dd129f25651f0d2' 
+}
 ```
+
+### logout(): Promise
+
+Удаление сессии. После этого рекомендуется не использовать экземпляр вообще или после повторного входа вызвать getAccountInfo.
 
 ### getAccountInfo(): Promise\<AccountInfo\>
 
@@ -120,6 +128,12 @@ vichles[403456789]="Автобус гор.";
 vichles[603456789]="Автобус обл.";
 vichles[803456789]="Поезд";
 ```
+
+### **static** passwordRecovery(email, gCaptchaResponse): Promise
+
+**Для вызова метода требуется ввод капчи пользователем**
+
+(todo)
 
 ## Коллекция Postman
 

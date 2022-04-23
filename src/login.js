@@ -8,6 +8,7 @@ export default class SOTKLogin {
     const { sessionToken, authToken, csrfToken } = session
     this.credentials.token = sessionToken
     this.credentials.csrfToken = csrfToken
+    this.credentials.authToken = authToken
     await fetch('https://s-otk.ru/index.php/passengerlk', {
       method: 'POST',
       body: new URLSearchParams({
@@ -20,6 +21,18 @@ export default class SOTKLogin {
       })
     })
     return session
+  }
+
+  async logout() {
+    await this.fetch('https://s-otk.ru/index.php/passengerlk', {
+      method: 'POST',
+      body: new URLSearchParams({
+        option: 'com_users',
+        task: 'user.logout',
+        return: 'aW5kZXgucGhwP0l0ZW1pZD0xMDE=',
+        [this.credentials.authToken]: 1
+      })
+    })
   }
 }
 
