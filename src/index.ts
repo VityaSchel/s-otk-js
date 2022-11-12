@@ -3,12 +3,15 @@ import SOTKLogin from './login.js'
 import SOTKCardsList from './cardsList.js'
 import SOTKHistory from './history.js'
 import SOTKInvoices from './invoices.js'
-import nodefetch, { Headers, HeadersInit } from 'node-fetch'
+import nodefetch, { Headers, HeadersInit, RequestInit } from 'node-fetch'
 import cookie from 'cookie'
 import { parse } from 'node-html-parser'
+import { SOTKFields } from './_fields.js'
 
 export type SOTKCredentials = {
   token?: string
+  csrfToken?: string
+  authToken?: string
 }
 export type SOTKAccount = {
   [key in 'balance' | 'delCard' | 'addCard' | 'history']: {
@@ -17,15 +20,13 @@ export type SOTKAccount = {
   }
 }
 
-class SOTKBase {
-  private credentials: SOTKCredentials = {}
-  private accountInfo: null | SOTKAccount = null
-
+export class SOTKBase extends SOTKFields {
   constructor() {
+    super()
     // this.credentials = {}
   }
 
-  fetch(url, options: { headers?: HeadersInit } = {}) {
+  fetch(url, options: RequestInit = {}) {
     const sessionToken = this.credentials.token
     if(sessionToken === undefined) throw new Error('Token is not passed in SOTK')
 
@@ -80,7 +81,7 @@ class SOTKBase {
     })
 
     const responseText = (await response.text()).trim()
-    if (responseText === 'Ошибка запроса:') throw new Error('Card ID not found')
+    if (responseText === 'Ошибка запроса:') throw new Error('SOTK Card ID not found')
 
     if (parseJSON) {
       const operationResult = JSON.parse(responseText)

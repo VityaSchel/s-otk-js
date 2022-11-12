@@ -1,8 +1,10 @@
 import fetch from 'node-fetch'
 import { parse } from 'node-html-parser'
 import cookie from 'cookie'
+import { SOTKBase } from './index'
+import { SOTKFields } from './_fields'
 
-export default class SOTKLogin {
+export default class SOTKLogin extends SOTKFields {
   async login({ username, password }) {
     const session = await startSession()
     const { sessionToken, authToken, csrfToken } = session
@@ -17,7 +19,7 @@ export default class SOTKLogin {
         option: 'com_users',
         task: 'user.login',
         return: 'aW5kZXgucGhwP0l0ZW1pZD0xMTk=',
-        [authToken]: 1
+        [authToken as string]: 1
       })
     })
     return session
