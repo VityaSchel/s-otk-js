@@ -1,12 +1,17 @@
 {
   "name": "s-otk-js",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "type": "module",
   "description": "Неофициальная обертка для закрытого API сайта Самарской Объединенной Транспортной Карты, написанная для NodeJS",
-  "main": "index.js",
+  "main": "out/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prebuild": "del out/",
+    "build": "ttsc",
+    "postbuild": "cpy '**/*' '!**/*.ts' '../out' --cwd=src --no-overwrite --parents",
+    "start": "node out/index.js",
+    "test": "jest"
   },
+  "files": ["out"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VityaSchel/s-otk-js.git"
@@ -17,7 +22,7 @@
     "api-wrapper",
     "samara"
   ],
-  "author": "vityaschel <hi@hloth.dev> (https://hloth.dev/)",
+  "author": "Viktor Shchelochkov <hi@hloth.dev> (https://hloth.dev/)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/VityaSchel/s-otk-js/issues"
@@ -32,6 +37,19 @@
   },
   "devDependencies": {
     "dotenv": "^16.0.0",
-    "eslint": "^8.13.0"
+    "eslint": "^8.13.0",
+    "cpy-cli": "^3.1.1",
+    "del-cli": "^4.0.1",
+    "ttypescript": "^1.5.13",
+    "typescript": "^4.8.3",
+    "@types/node": "^18.7.18",
+    "@typescript-eslint/eslint-plugin": "^5.38.0",
+    "@typescript-eslint/parser": "^5.38.0",
+    "@types/jest": "^29.2.0",
+    "@zoltu/typescript-transformer-append-js-extension": "^1.0.1",
+    "ts-jest": "^29.0.3",
+    "babel-jest": "^29.2.2",
+    "@babel/preset-env": "^7.19.4",
+    "@babel/preset-typescript": "^7.18.6"
   }
 }
