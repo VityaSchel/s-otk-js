@@ -3,19 +3,35 @@ import SOTKLogin from './login.js'
 import SOTKCardsList from './cardsList.js'
 import SOTKHistory from './history.js'
 import SOTKInvoices from './invoices.js'
-import nodefetch, { Headers } from 'node-fetch'
+import nodefetch, { Headers, HeadersInit } from 'node-fetch'
 import cookie from 'cookie'
 import { parse } from 'node-html-parser'
 
+export type SOTKCredentials = {
+  token?: string
+}
+export type SOTKAccount = {
+  [key in 'balance' | 'delCard' | 'addCard' | 'history']: {
+    token
+    pid
+  }
+}
+
 class SOTKBase {
+  private credentials: SOTKCredentials = {}
+  private accountInfo: null | SOTKAccount = null
+
   constructor() {
-    this.credentials = {}
+    // this.credentials = {}
   }
 
-  fetch(url, options = {}) {
+  fetch(url, options: { headers?: HeadersInit } = {}) {
+    const sessionToken = this.credentials.token
+    if(sessionToken === undefined) throw new Error('Token is not passed in SOTK')
+
     const headers = new Headers(options.headers)
     headers.set('cookie', [
-      cookie.serialize('fb60ded04faae990cc1fc4ed1921fc75', this.credentials.token)
+      cookie.serialize('fb60ded04faae990cc1fc4ed1921fc75', sessionToken)
     ].join('; '))
     // DO NOT USE SET-COOKIE: https://stackoverflow.com/a/35258629/13689893
     options.headers = headers
@@ -31,29 +47,29 @@ class SOTKBase {
 
     const balanceForm = root.querySelector('form#getbalance')
     const balance = {
-      token: balanceForm.querySelector('#balance_token').getAttribute('name'),
-      pid: balanceForm.querySelector('#balance_pid').getAttribute('name'),
+      token: balanceForm?.querySelector('#balance_token')?.getAttribute('name'),
+      pid: balanceForm?.querySelector('#balance_pid')?.getAttribute('name'),
     }
 
     const delCardForm = root.querySelector('form#carddel')
     const delCard = {
-      token: delCardForm.querySelector('#token_del').getAttribute('name'),
-      pid: delCardForm.querySelector('#pid_del').getAttribute('name'),
+      token: delCardForm?.querySelector('#token_del')?.getAttribute('name'),
+      pid: delCardForm?.querySelector('#pid_del')?.getAttribute('name'),
     }
 
     const cardAddForm = root.querySelector('form#numtype')
     const addCard = {
-      token: cardAddForm.querySelector('#token').getAttribute('name'),
-      pid: cardAddForm.querySelector('#pid').getAttribute('name'),
+      token: cardAddForm?.querySelector('#token')?.getAttribute('name'),
+      pid: cardAddForm?.querySelector('#pid')?.getAttribute('name'),
     }
 
     const historyForm = root.querySelector('form#cardhistory')
     const history = {
-      token: historyForm.querySelector('#token_hys').getAttribute('name'),
-      pid: historyForm.querySelector('#pid_hys').getAttribute('name'),
+      token: historyForm?.querySelector('#token_hys')?.getAttribute('name'),
+      pid: historyForm?.querySelector('#pid_hys')?.getAttribute('name'),
     }
 
-    this.accountInfo = { root, balance, delCard, addCard, history }
+    this.accountInfo = { balance, delCard, addCard, history }
     return this.accountInfo
   }
 
