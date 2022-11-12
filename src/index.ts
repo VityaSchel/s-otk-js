@@ -5,8 +5,7 @@ import SOTKHistory from './history.js'
 import SOTKInvoices from './invoices.js'
 import nodefetch, { Headers, HeadersInit, RequestInit } from 'node-fetch'
 import cookie from 'cookie'
-import { parse } from 'node-html-parser'
-import { SOTKFields } from './_fields.js'
+import { HTMLElement, parse } from 'node-html-parser'
 
 export type SOTKCredentials = {
   token?: string
@@ -14,15 +13,30 @@ export type SOTKCredentials = {
   authToken?: string
 }
 export type SOTKAccount = {
-  [key in 'balance' | 'delCard' | 'addCard' | 'history']: {
+  root: HTMLElement
+  balance: {
+    token
+    pid
+  }
+  delCard: {
+    token
+    pid
+  }
+  addCard: {
+    token
+    pid
+  }
+  history: {
     token
     pid
   }
 }
 
-export class SOTKBase extends SOTKFields {
+export class SOTKBase {
+  credentials: SOTKCredentials = {}
+  accountInfo: null | SOTKAccount = null
+
   constructor() {
-    super()
     // this.credentials = {}
   }
 
@@ -70,7 +84,7 @@ export class SOTKBase extends SOTKFields {
       pid: historyForm?.querySelector('#pid_hys')?.getAttribute('name'),
     }
 
-    this.accountInfo = { balance, delCard, addCard, history }
+    this.accountInfo = { root, balance, delCard, addCard, history }
     return this.accountInfo
   }
 

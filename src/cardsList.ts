@@ -1,4 +1,6 @@
-export default class SOTKCardsList {
+import SOTKHistory from './history'
+
+export default class SOTKCardsList extends SOTKHistory {
   async getCards() {
     const { root } = await this.getAccountInfo()
     const cards = root

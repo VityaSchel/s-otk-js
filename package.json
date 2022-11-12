@@ -11,7 +11,9 @@
     "start": "node out/index.js",
     "test": "jest"
   },
-  "files": ["out"],
+  "files": [
+    "out"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VityaSchel/s-otk-js.git"
@@ -30,26 +32,27 @@
   "homepage": "https://github.com/VityaSchel/s-otk-js#readme",
   "dependencies": {
     "cookie": "^0.5.0",
+    "date-fns": "^2.29.3",
     "form-data": "^4.0.0",
     "lodash": "^4.17.21",
     "node-fetch": "^3.2.3",
     "node-html-parser": "^5.3.3"
   },
   "devDependencies": {
-    "dotenv": "^16.0.0",
-    "eslint": "^8.13.0",
-    "cpy-cli": "^3.1.1",
-    "del-cli": "^4.0.1",
-    "ttypescript": "^1.5.13",
-    "typescript": "^4.8.3",
+    "@babel/preset-env": "^7.19.4",
+    "@babel/preset-typescript": "^7.18.6",
+    "@types/jest": "^29.2.0",
     "@types/node": "^18.7.18",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
-    "@types/jest": "^29.2.0",
     "@zoltu/typescript-transformer-append-js-extension": "^1.0.1",
-    "ts-jest": "^29.0.3",
     "babel-jest": "^29.2.2",
-    "@babel/preset-env": "^7.19.4",
-    "@babel/preset-typescript": "^7.18.6"
+    "cpy-cli": "^3.1.1",
+    "del-cli": "^4.0.1",
+    "dotenv": "^16.0.0",
+    "eslint": "^8.13.0",
+    "ts-jest": "^29.0.3",
+    "ttypescript": "^1.5.13",
+    "typescript": "^4.8.3"
   }
 }

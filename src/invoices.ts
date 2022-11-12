@@ -1,4 +1,6 @@
-export default class SOTKInvoices {
+import { SOTKBase } from './index'
+
+export default class SOTKInvoices extends SOTKBase {
   async createInvoice(cardID, sum) {
     const { balance } = await this.getAccountInfo()
     const checkResponse = await this.runOperation({

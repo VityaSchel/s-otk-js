@@ -1,6 +1,7 @@
 import { format } from 'date-fns'
+import { SOTKBase } from './index'
 
-export default class SOTKHistory {
+export default class SOTKHistory extends SOTKBase {
   async getHistory(cardID, startDate = new Date(), endDate = new Date()) {
     const { history } = await this.getAccountInfo()
 

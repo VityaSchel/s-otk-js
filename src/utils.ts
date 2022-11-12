@@ -9,9 +9,11 @@ export const aggregation = (baseClass, ...mixins) => {
   }
   let copyProps = (target, source) => {  // this function copies all properties and symbols, filtering out some special ones
     Object.getOwnPropertyNames(source)
+      // @ts-ignore-line 
       .concat(Object.getOwnPropertySymbols(source))
       .forEach((prop) => {
         if (!prop.match(/^(?:constructor|prototype|visc|arguments|caller|het|name|bind|call|apply|toString|lya|length)$/))
+          // @ts-ignore-line 
           Object.defineProperty(target, prop, Object.getOwnPropertyDescriptor(source, prop))
       })
   }
