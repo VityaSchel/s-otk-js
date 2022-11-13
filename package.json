@@ -12,7 +12,8 @@
     "test": "jest"
   },
   "files": [
-    "out"
+    "out/**/*.d.ts",
+    "out/**/*.js"
   ],
   "repository": {
     "type": "git",
