@@ -1,7 +1,17 @@
 import { format } from 'date-fns'
 import { SOTKBase } from './index'
 
-export async function getHistory(this: SOTKBase, cardID, startDate = new Date(), endDate = new Date()) {
+export type HistoryEntry = {
+  /** Дата в формате "dd mm yyyy hh:mm:ss" */
+  dt: string
+  /** Сумма транзакции, дробная часть отделена точкой (конвертируется в число) */
+  sum: string
+  /** Номер маршрута (конвертируется в число) */
+  code: string
+  /** Тип поездки (конвертируется в число) */
+  vichle: string
+}
+export async function getHistory(this: SOTKBase, cardID, startDate = new Date(), endDate = new Date()): Promise<HistoryEntry[]> {
   const { history } = await this.getAccountInfo()
 
   const historyResponse = await this.runJSONOperation({
@@ -12,5 +22,5 @@ export async function getHistory(this: SOTKBase, cardID, startDate = new Date(),
     startday: format(startDate, 'yyyy-M-d'),
     endday: format(endDate, 'yyyy-M-d'),
   })
-  return historyResponse.data
+  return historyResponse.data as HistoryEntry[]
 }

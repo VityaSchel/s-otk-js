@@ -8,12 +8,11 @@ await SOTK.login({
 })
 
 const cards = await SOTK.getCards()
-const cardsHistories = await Promise.all(
-  cards.map(async card => [card.number, await card.getHistory(new Date('2022-02-24'))])
-)
-
+  
 console.log('Истории ваших карт:')
-cardsHistories.forEach(card => {
-  console.log(card[0])
-  console.log(card[1])
-})
+for(const card of cards) {
+  console.log(card.number)
+  const history = await card.getHistory(new Date('2022-02-24'))
+  console.log(history)
+  console.log('Вы потратили уже', history.reduce((prev, entry) => prev + Number(entry.sum), 0).toFixed(2), 'рублей')
+}
