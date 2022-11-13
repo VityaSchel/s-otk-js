@@ -42,10 +42,33 @@ describe('Cards list operations', () => {
     const operationResult = await SOTK.addCard(process.env.SOTK_TEST_CARD as string)
     expect(operationResult.success).toBe(true)
   })
+  
+  test('gets card info', async () => {
+    const operationResult = await SOTK.getCardInfo(process.env.SOTK_TEST_CARD as string)
+    expect(operationResult.balance).toBeTruthy()
+    expect(operationResult.type).toBeTruthy()
+    expect(typeof operationResult.short).toBe('string')
+    expect(operationResult.short.match(/^0*(\d+)$/)![1]).toBe(process.env.SOTK_TEST_CARD as string)
+  })
+  
+  test('gets cards list', async () => {
+    const cards = await SOTK.getCards()
+    expect(Array.isArray(cards)).toBe(true)
+    cards.forEach(card => expect(typeof card.number).toBe('string'))
+    cards.forEach(card => expect(card.number).toBeTruthy())
+  })
+  
   test('removes a card', async () => {
     const operationResult = await SOTK.deleteCard(process.env.SOTK_TEST_CARD)
     expect(operationResult.success).toBe(true)
   })
+  
+  test('throws exception when trying to get info on card that is not added', async () => {
+    await expect(SOTK.getCardInfo(process.env.SOTK_TEST_CARD as string))
+      .rejects
+      .toMatchObject({ message: 'SOTK operation error. Ошибка запроса:' })
+  })
+  
   test('throws exceptions when trying to add invalid cards', async () => {
     await expect(SOTK.addCard('0'))
       .rejects

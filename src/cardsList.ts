@@ -13,7 +13,18 @@ export async function getCards(this: SOTKBase) {
   return cards
 }
 
-export async function getCardInfo(this: SOTKBase, cardID) {
+export type CardInfo = {
+  /** Строка с номером карты, может содержать нули в начале */
+  short: string
+  ctg: number
+  /** Описание, например "Карта Школьника" */
+  ctgdesk: string
+  /** Строка, содержащая баланс карты, дробная часть отделяется точкой */
+  balance: string
+  st_limit: null | any
+  type: string
+}
+export async function getCardInfo(this: SOTKBase, cardID): Promise<CardInfo> {
   const { balance } = await this.getAccountInfo()
 
   const cardInfoResponse = await this.runJSONOperation({
@@ -22,7 +33,7 @@ export async function getCardInfo(this: SOTKBase, cardID) {
     [balance.token]: '1',
     pid: String(balance.pid)
   })
-  return cardInfoResponse
+  return cardInfoResponse.data as CardInfo
 }
 
 const cardIDRegex = /^(\d{9}|\d{19})$/

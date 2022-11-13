@@ -31,8 +31,8 @@ export type SOTKAccount = {
   }
 }
 export type OperationResult = {
-  /** JSON-serialized result of operation. May be unicode-encoded text, object or anything else */
-  data: string
+  /** JSON-parsed result of operation. May be unicode-decoded text, object or anything else */
+  data: any
   success: boolean
   message: null | any
   messages: null | any
@@ -105,7 +105,11 @@ export class SOTKBase {
 
     try {
       const operationResult = JSON.parse(result) as OperationResult
-      try { operationResult.data = decodeURIComponent(JSON.parse(operationResult.data)) } catch(e) {/**/}
+      try { 
+        const jsonParsedResult = JSON.parse(operationResult.data)
+        if(typeof jsonParsedResult === 'string') operationResult.data = decodeURIComponent(jsonParsedResult)
+        else operationResult.data = jsonParsedResult
+      } catch(e) {/**/}
       return operationResult
     } catch(e) {
       if(e instanceof SyntaxError) {
