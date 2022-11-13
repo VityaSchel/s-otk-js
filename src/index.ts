@@ -1,8 +1,7 @@
-import { aggregation } from './utils.js'
-import SOTKLogin from './login.js'
-import SOTKCardsList from './cardsList.js'
-import SOTKHistory from './history.js'
-import SOTKInvoices from './invoices.js'
+import * as SOTKLogin from './login'
+import * as SOTKCardsList from './cardsList'
+import * as SOTKHistory from './history'
+import * as SOTKInvoices from './invoices'
 import nodefetch, { Headers, HeadersInit, RequestInit } from 'node-fetch'
 import cookie from 'cookie'
 import { HTMLElement, parse } from 'node-html-parser'
@@ -45,16 +44,16 @@ export class SOTKBase {
     if(sessionToken === undefined) throw new Error('Token is not passed in SOTK')
 
     const headers = new Headers(options.headers)
-    headers.set('cookie', [
-      cookie.serialize('fb60ded04faae990cc1fc4ed1921fc75', sessionToken)
+    headers.set('Cookie', [
+      cookie.serialize('fb60ded04faae990cc1fc4ed1921fc75', sessionToken, { path: '/' }),
+      cookie.serialize('joomla_user_state', 'logged_in'),
     ].join('; '))
     // DO NOT USE SET-COOKIE: https://stackoverflow.com/a/35258629/13689893
-    options.headers = headers
-    return nodefetch(url, options)
+    return nodefetch(url, { ...options, headers })
   }
 
   async getAccountInfo(useCache = false) {
-    if (this.accountInfo && useCache) return this.accountInfo
+    if (useCache && this.accountInfo) return this.accountInfo
 
     const response = await this.fetch('https://s-otk.ru/index.php/passengerlk')
     const accountInfo = await response.text()
@@ -104,12 +103,15 @@ export class SOTKBase {
       return responseText
     }
   }
+
+  login = SOTKLogin.login
+  logout = SOTKLogin.logout
+  getCards = SOTKCardsList.getCards
+  getCardInfo = SOTKCardsList.getCardInfo
+  addCard = SOTKCardsList.addCard
+  deleteCard = SOTKCardsList.deleteCard
+  getHistory = SOTKHistory.getHistory
+  createInvoice = SOTKInvoices.createInvoice
 }
 
-export default class SOTK extends aggregation(
-  SOTKBase,
-  SOTKLogin,
-  SOTKCardsList,
-  SOTKHistory,
-  SOTKInvoices
-) { }
+export default SOTKBase
