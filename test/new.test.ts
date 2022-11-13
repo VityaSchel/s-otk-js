@@ -1,11 +1,22 @@
 import './.env.ts'
 import SOTKAPI from '../src/index'
+import type { CardInfo } from '../src/cardsList'
 
 const SOTK = new SOTKAPI()
 
 const testLogin = false
 describe('Logs in', () => {
   if(testLogin) {
+    test('tries to login with invalid password', async () => {
+      await expect(
+        SOTK.login({
+          username: process.env.SOTK_USERNAME as string,
+          password: 'test'
+        })
+      ).rejects.toMatchObject({
+        message: 'Couldn\'t login into SOTK: Credentials are invalid'
+      })
+    })
     test('creates a user session', async () => {
       const loginResult = await SOTK.login({ 
         username: process.env.SOTK_USERNAME as string, 
@@ -42,33 +53,41 @@ describe('Cards list operations', () => {
     const operationResult = await SOTK.addCard(process.env.SOTK_TEST_CARD as string)
     expect(operationResult.success).toBe(true)
   })
-  
+
+  const checkCard = async (card: CardInfo, correctCardNumber: string) => {
+    card.balance === null && console.log(card)
+    expect(card.balance).toBeTruthy()
+    expect(card.type).toBeTruthy()
+    expect(typeof card.short).toBe('string')
+    expect(card.short.match(/^0*(\d+)$/)![1]).toBe(correctCardNumber)
+  }
+
   test('gets card info', async () => {
     const operationResult = await SOTK.getCardInfo(process.env.SOTK_TEST_CARD as string)
-    expect(operationResult.balance).toBeTruthy()
-    expect(operationResult.type).toBeTruthy()
-    expect(typeof operationResult.short).toBe('string')
-    expect(operationResult.short.match(/^0*(\d+)$/)![1]).toBe(process.env.SOTK_TEST_CARD as string)
+    await checkCard(operationResult, process.env.SOTK_TEST_CARD as string)
   })
-  
+
   test('gets cards list', async () => {
     const cards = await SOTK.getCards()
     expect(Array.isArray(cards)).toBe(true)
-    cards.forEach(card => expect(typeof card.number).toBe('string'))
-    cards.forEach(card => expect(card.number).toBeTruthy())
-  })
-  
+    for(const card of cards) {
+      expect(typeof card.number).toBe('string')
+      expect(card.number).toBeTruthy()
+      await checkCard(await card.getInfo(), card.number)
+    }
+  }, 20000)
+
   test('removes a card', async () => {
     const operationResult = await SOTK.deleteCard(process.env.SOTK_TEST_CARD)
     expect(operationResult.success).toBe(true)
   })
-  
+
   test('throws exception when trying to get info on card that is not added', async () => {
     await expect(SOTK.getCardInfo(process.env.SOTK_TEST_CARD as string))
       .rejects
       .toMatchObject({ message: 'SOTK operation error. Ошибка запроса:' })
-  })
-  
+  }, 10000)
+
   test('throws exceptions when trying to add invalid cards', async () => {
     await expect(SOTK.addCard('0'))
       .rejects
@@ -82,5 +101,5 @@ describe('Cards list operations', () => {
     await expect(SOTK.addCard('100999999'))
       .rejects
       .toMatchObject({ message: 'Couldn\'t add a new SOTK card due to the following reason: Карта 100999999 в базе не найдена' })
-  })
+  }, 20000)
 })

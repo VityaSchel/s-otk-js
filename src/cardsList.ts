@@ -7,7 +7,7 @@ export async function getCards(this: SOTKBase) {
     .map(cardElement => ({
       number: cardElement.innerText,
       getInfo: () => this.getCardInfo(cardElement.innerText),
-      getHistory: (startDate, endDate) => this.getHistory(cardElement.innerText, startDate, endDate),
+      getHistory: (startDate = new Date(), endDate = new Date()) => this.getHistory(cardElement.innerText, startDate, endDate),
       delete: () => this.deleteCard(cardElement.innerText)
     }))
   return cards

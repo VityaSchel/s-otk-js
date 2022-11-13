@@ -29,6 +29,7 @@ export async function login(this: SOTKBase, credentials: { username: string, pas
     body: body.toString(),
     redirect: 'manual'
   })
+  if(response.headers.get('Location') === '/index.php/registration?view=login') throw new Error('Couldn\'t login into SOTK: Credentials are invalid')
   const SET_COOKIE_HEADER = response.headers.get('set-cookie')
   if(!SET_COOKIE_HEADER) throw new Error('Couldn\'t start new SOTK session')
   const cookies = cookie.parse(SET_COOKIE_HEADER)
