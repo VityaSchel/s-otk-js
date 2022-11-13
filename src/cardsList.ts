@@ -16,36 +16,37 @@ export async function getCards(this: SOTKBase) {
 export async function getCardInfo(this: SOTKBase, cardID) {
   const { balance } = await this.getAccountInfo()
 
-  const cardInfoResponse = await this.runOperation({
+  const cardInfoResponse = await this.runJSONOperation({
     operation: '6',
     card: cardID,
     [balance.token]: '1',
     pid: String(balance.pid)
-  }, true)
-  const cardInfo = JSON.parse(cardInfoResponse.data)
-  return cardInfo
+  })
+  return cardInfoResponse
 }
 
 export async function addCard(this: SOTKBase, cardID: string) {
   const { addCard } = await this.getAccountInfo()
 
-  const cardAdded = await this.runOperation({
+  const cardAdded = await this.runJSONOperation({
     operation: '1',
     card: cardID,
     [addCard.token]: '1',
     pid: String(addCard.pid)
-  }, true)
+  })
+  if(!cardAdded.success) throw new Error(`Couldn\'t add a new SOTK card due to the following reason: ${cardAdded.data}`)
   return cardAdded
 }
 
 export async function deleteCard(this: SOTKBase, cardID) {
   const { delCard } = await this.getAccountInfo()
 
-  const cardDeletion = await this.runOperation({
+  const cardDeletion = await this.runJSONOperation({
     operation: '2',
     card: cardID,
     [delCard.token]: '1',
     pid: String(delCard.pid)
-  }, true)
+  })
+  if(!cardDeletion.success) throw new Error(`Couldn\'t delete a SOTK card due to the following reason: ${cardDeletion.data}`)
   return cardDeletion
 }

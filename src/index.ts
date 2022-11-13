@@ -99,33 +99,37 @@ export class SOTKBase {
     return this.accountInfo
   }
 
-  // async runOperation(body: object, parseJSON = false): Promise<string>
-  // async runOperation(body: { [key: string]: string }, parseJSON = true): Promise<OperationResult | string> {
-  // async runOperation(body: { [key: string]: string }, parseJSON: false): Promise<string>
-  async runOperation(body: { [key: string]: string }, parseJSON: true): Promise<OperationResult> {
+  // REFACTOR: https://stackoverflow.com/questions/74419442/typescript-overload-function-signature-with-boolean-parameter-with-dependant-ret
+  async runJSONOperation(body: { [key: string]: string }): Promise<OperationResult & { 
+    /** **JSON-parsed value of result.data field** */
+    data: any 
+  }> {
+    const result = await this.runOperation(body)
+
+    try {
+      const operationResult = JSON.parse(result)
+      return operationResult
+    } catch(e) {
+      if(e instanceof SyntaxError) {
+        throw new Error('Couldn\'t parse JSON result of SOTK API response')
+      } else {
+        throw e
+      }
+    }
+  }
+
+  async runOperation(body: { [key: string]: string }): Promise<string> {
     const response = await this.fetch('https://s-otk.ru/index.php/index.php?option=com_ajax&module=lkabinet&format=json', {
       method: 'POST',
       body: new URLSearchParams(body)
     })
 
     const responseText = (await response.text()).trim()
-    if (responseText === 'Ошибка запроса:') throw new Error('SOTK Card ID not found')
-
-    // TODO: https://stackoverflow.com/questions/74419442/typescript-overload-function-signature-with-boolean-parameter-with-dependant-ret
-    if (/*parseJSON*/ true) {
-      try {
-        const operationResult = JSON.parse(responseText)
-        return operationResult
-      } catch(e) {
-        if(e instanceof SyntaxError) {
-          throw new Error('Couldn\'t parse JSON result of SOTK API response')
-        } else {
-          throw e
-        }
-      }
-    }/* else {
-      return responseText
-    }*/
+    if (responseText === 'Ошибка запроса:') {
+      throw new Error('SOTK operation error. '.concat(responseText))
+    }
+    
+    return responseText
   }
 
   login = SOTKLogin.login

@@ -14,6 +14,7 @@ if(testLogin) {
       expect(loginResult.sessionToken).toBeTruthy()
       expect(loginResult.csrfToken).toBeTruthy()
       expect(loginResult.authToken).toBeTruthy()
+      console.log(loginResult)
     }, 10000)
   })
 } else {
