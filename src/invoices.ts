@@ -1,9 +1,12 @@
 import { SOTKBase } from './index'
 
 type Invoice = {
+  /** URL шлюза оплаты */
   formUrl: string
   errorCode: number
   errorMessage?: string
+  /** UUID счета */
+  orderId: string
 }
 
 type Check = {
@@ -25,7 +28,15 @@ type Check = {
   tariffostatok: number
 }
 
-export async function createInvoice(this: SOTKBase, cardID: string, sum: string): Promise<Invoice> {
+export async function createInvoice(
+  this: SOTKBase, 
+  /** Счет можно создать на любую карту, необязательно привязанную к аккаунту */
+  cardID: string, 
+  /** Целое число в копейках, например 1 рубль — это sum=100 */
+  sum: number
+): Promise<Invoice> {
+  if(!Number.isInteger(sum)) throw new Error('Couldn\'t create invoice for SOTK where sum parameter is not integer')
+
   const { balance } = await this.getAccountInfo()
   const checkResponse = await this.runJSONOperation({
     pid: balance.pid,
@@ -47,7 +58,7 @@ export async function createInvoice(this: SOTKBase, cardID: string, sum: string)
     operation: '5',
     card: cardID,
     tariffid: '10',
-    paymentsum: sum,
+    paymentsum: String(sum),
     sessionid: SID
   })
 

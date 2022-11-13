@@ -8,5 +8,5 @@ await SOTK.login({
 })
 
 console.log(
-  await SOTK.createInvoice(process.env.SOTK_TEST_CARD as string, '100.0')
+  await SOTK.createInvoice(process.env.SOTK_TEST_CARD as string, 100)
 )
