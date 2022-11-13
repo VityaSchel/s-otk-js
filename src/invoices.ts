@@ -4,8 +4,8 @@ export async function createInvoice(this: SOTKBase, cardID, sum) {
   const { balance } = await this.getAccountInfo()
   const checkResponse = await this.runOperation({
     pid: balance.pid,
-    [balance.token]: 1,
-    operation: 4,
+    [balance.token]: '1',
+    operation: '4',
     card: cardID
   }, true)
   
@@ -15,10 +15,10 @@ export async function createInvoice(this: SOTKBase, cardID, sum) {
   const SID = check[0].sessionid
   const invoiceResponse = await this.runOperation({
     pid: balance.pid,
-    [balance.token]: 1,
-    operation: 5,
+    [balance.token]: '1',
+    operation: '5',
     card: cardID,
-    tariffid: 10,
+    tariffid: '10',
     paymentsum: sum,
     sessionid: SID
   }, true)

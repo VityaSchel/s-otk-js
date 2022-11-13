@@ -30,7 +30,19 @@ export type SOTKAccount = {
     pid
   }
 }
+export type OperationResult = {
+  /** JSON-serialized result of operation. May be unicode-encoded text, object or anything else */
+  data: string
+  success: boolean
+  message: null | any
+  messages: null | any
+}
 
+
+type TypeMap = {
+  true: OperationResult
+  false: string
+}
 export class SOTKBase {
   credentials: SOTKCredentials = {}
   accountInfo: null | SOTKAccount = null
@@ -87,7 +99,10 @@ export class SOTKBase {
     return this.accountInfo
   }
 
-  async runOperation(body, parseJSON = false) {
+  // async runOperation(body: object, parseJSON = false): Promise<string>
+  // async runOperation(body: { [key: string]: string }, parseJSON = true): Promise<OperationResult | string> {
+  // async runOperation(body: { [key: string]: string }, parseJSON: false): Promise<string>
+  async runOperation(body: { [key: string]: string }, parseJSON: true): Promise<OperationResult> {
     const response = await this.fetch('https://s-otk.ru/index.php/index.php?option=com_ajax&module=lkabinet&format=json', {
       method: 'POST',
       body: new URLSearchParams(body)
@@ -96,12 +111,21 @@ export class SOTKBase {
     const responseText = (await response.text()).trim()
     if (responseText === 'Ошибка запроса:') throw new Error('SOTK Card ID not found')
 
-    if (parseJSON) {
-      const operationResult = JSON.parse(responseText)
-      return operationResult
-    } else {
+    // TODO: https://stackoverflow.com/questions/74419442/typescript-overload-function-signature-with-boolean-parameter-with-dependant-ret
+    if (/*parseJSON*/ true) {
+      try {
+        const operationResult = JSON.parse(responseText)
+        return operationResult
+      } catch(e) {
+        if(e instanceof SyntaxError) {
+          throw new Error('Couldn\'t parse JSON result of SOTK API response')
+        } else {
+          throw e
+        }
+      }
+    }/* else {
       return responseText
-    }
+    }*/
   }
 
   login = SOTKLogin.login

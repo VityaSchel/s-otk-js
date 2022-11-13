@@ -14,9 +14,7 @@ if(testLogin) {
       expect(loginResult.sessionToken).toBeTruthy()
       expect(loginResult.csrfToken).toBeTruthy()
       expect(loginResult.authToken).toBeTruthy()
-
-      console.log(await SOTK.getAccountInfo())
-    }, 15000)
+    }, 10000)
   })
 } else {
   SOTK.credentials = {
@@ -26,15 +24,19 @@ if(testLogin) {
   }
 }
 
-// describe('Cards list operations', () => {
-//   test('adds new card', async () => {
-//     const operationResult = await SOTK.addCard(process.env.SOTK_TEST_CARD)
-//     console.log(operationResult)
-//     // expect()
-//   })
-//   test('removes a card', async () => {
-//     const operationResult = await SOTK.deleteCard(process.env.SOTK_TEST_CARD)
-//     console.log(operationResult)
-//     // expect()
-//   })
-// })
+describe('Cards list operations', () => {
+  test('adds new card', async () => {
+    const operationResult = await SOTK.addCard(process.env.SOTK_TEST_CARD as string)
+    expect(operationResult.success).toBe(true)
+  })
+  test('removes a card', async () => {
+    const operationResult = await SOTK.deleteCard(process.env.SOTK_TEST_CARD)
+    expect(operationResult.success).toBe(true)
+  })
+  test('throws exceptions when trying to add invalid cards', async () => {
+    console.log(await SOTK.addCard('0'))
+    console.log(await SOTK.addCard('-1'))
+    console.log(await SOTK.addCard('100999999'))
+    // expect(() => SOTK.addCard())
+  })
+})
