@@ -100,14 +100,12 @@ export class SOTKBase {
   }
 
   // REFACTOR: https://stackoverflow.com/questions/74419442/typescript-overload-function-signature-with-boolean-parameter-with-dependant-ret
-  async runJSONOperation(body: { [key: string]: string }): Promise<OperationResult & { 
-    /** **JSON-parsed value of result.data field** */
-    data: any 
-  }> {
+  async runJSONOperation(body: { [key: string]: string }): Promise<OperationResult> {
     const result = await this.runOperation(body)
 
     try {
-      const operationResult = JSON.parse(result)
+      const operationResult = JSON.parse(result) as OperationResult
+      try { operationResult.data = decodeURIComponent(JSON.parse(operationResult.data)) } catch(e) {/**/}
       return operationResult
     } catch(e) {
       if(e instanceof SyntaxError) {
