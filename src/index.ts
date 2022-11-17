@@ -37,12 +37,18 @@ export type OperationResult = {
   message: null | any
   messages: null | any
 }
+export class SOTKOperationError extends Error {
+  code: string
+  rawResponse: string
 
-
-type TypeMap = {
-  true: OperationResult
-  false: string
+  constructor(message: string, code: string, rawResponse: string) {
+    super(message)
+    this.name = 'SOTKOperationError'
+    this.code = code
+    this.rawResponse = rawResponse
+  }
 }
+
 export class SOTKBase {
   credentials: SOTKCredentials = {}
   accountInfo: null | SOTKAccount = null
@@ -103,6 +109,9 @@ export class SOTKBase {
   async runJSONOperation(body: { [key: string]: string }): Promise<OperationResult> {
     const result = await this.runOperation(body)
 
+    const NOT_LOGGED_IN_RESPONSE = 'Уппс! Вам тут не рады'
+    if(result === NOT_LOGGED_IN_RESPONSE) throw new SOTKOperationError('SOTK session isn\'t valid', 'NOT_LOGGED_IN', result)
+
     try {
       const operationResult = JSON.parse(result) as OperationResult
       try { 
@@ -113,7 +122,7 @@ export class SOTKBase {
       return operationResult
     } catch(e) {
       if(e instanceof SyntaxError) {
-        throw new Error('Couldn\'t parse JSON result of SOTK API response')
+        throw new SOTKOperationError('Couldn\'t parse JSON result of SOTK API response', 'PARSE_ERROR', result)
       } else {
         throw e
       }
