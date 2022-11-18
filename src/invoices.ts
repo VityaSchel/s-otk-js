@@ -39,8 +39,6 @@ export async function createInvoice(
 
   const { balance } = await this.getAccountInfo()
   const checkResponse = await this.runJSONOperation({
-    pid: balance.pid,
-    [balance.token]: '1',
     operation: '4',
     card: cardID
   })
@@ -53,8 +51,6 @@ export async function createInvoice(
   
   const SID = check.sessionid
   const invoiceResponse = await this.runJSONOperation({
-    pid: balance.pid,
-    [balance.token]: '1',
     operation: '5',
     card: cardID,
     tariffid: '10',

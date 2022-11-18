@@ -6,7 +6,7 @@
 
 ![Jest Logo](https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=jest&logoColor=white&label=%D0%90%D0%B2%D1%82%D0%BE-%D1%82%D0%B5%D1%81%D1%82%D1%8B%20%D1%81)
 
-![Coverage](https://img.shields.io/badge/62%25-181818?style=for-the-badge&label=%D0%9F%D0%BE%D0%BA%D1%80%D1%8B%D1%82%D0%B8%D0%B5%20%D1%82%D0%B5%D1%81%D1%82%D0%B0%D0%BC%D0%B8:)
+![Coverage](https://img.shields.io/badge/85.15%25-181818?style=for-the-badge&label=%D0%9F%D0%BE%D0%BA%D1%80%D1%8B%D1%82%D0%B8%D0%B5%20%D1%82%D0%B5%D1%81%D1%82%D0%B0%D0%BC%D0%B8:)
 
 ## Установка
 

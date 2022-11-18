@@ -14,20 +14,20 @@ export type SOTKCredentials = {
 export type SOTKAccount = {
   root: HTMLElement
   balance: {
-    token
-    pid
+    token: string
+    pid: string
   }
   delCard: {
-    token
-    pid
+    token: string
+    pid: string
   }
   addCard: {
-    token
-    pid
+    token: string
+    pid: string
   }
   history: {
-    token
-    pid
+    token: string
+    pid: string
   }
 }
 export type OperationResult = {
@@ -79,26 +79,26 @@ export class SOTKBase {
 
     const balanceForm = root.querySelector('form#getbalance')
     const balance = {
-      token: balanceForm?.querySelector('#balance_token')?.getAttribute('name'),
-      pid: balanceForm?.querySelector('#balance_pid')?.getAttribute('name'),
+      token: balanceForm?.querySelector('#balance_token')?.getAttribute('name') ?? '',
+      pid: balanceForm?.querySelector('#balance_pid')?.getAttribute('name') ?? '',
     }
 
     const delCardForm = root.querySelector('form#carddel')
     const delCard = {
-      token: delCardForm?.querySelector('#token_del')?.getAttribute('name'),
-      pid: delCardForm?.querySelector('#pid_del')?.getAttribute('name'),
+      token: delCardForm?.querySelector('#token_del')?.getAttribute('name') ?? '',
+      pid: delCardForm?.querySelector('#pid_del')?.getAttribute('name') ?? '',
     }
 
     const cardAddForm = root.querySelector('form#numtype')
     const addCard = {
-      token: cardAddForm?.querySelector('#token')?.getAttribute('name'),
-      pid: cardAddForm?.querySelector('#pid')?.getAttribute('name'),
+      token: cardAddForm?.querySelector('#token')?.getAttribute('name') ?? '',
+      pid: cardAddForm?.querySelector('#pid')?.getAttribute('name') ?? '',
     }
 
     const historyForm = root.querySelector('form#cardhistory')
     const history = {
-      token: historyForm?.querySelector('#token_hys')?.getAttribute('name'),
-      pid: historyForm?.querySelector('#pid_hys')?.getAttribute('name'),
+      token: historyForm?.querySelector('#token_hys')?.getAttribute('name') ?? '',
+      pid: historyForm?.querySelector('#pid_hys')?.getAttribute('name') ?? '',
     }
 
     this.accountInfo = { root, balance, delCard, addCard, history }
@@ -130,9 +130,30 @@ export class SOTKBase {
   }
 
   async runOperation(body: { [key: string]: string }): Promise<string> {
+    const accountInfo = await this.getAccountInfo()
+
+    type operationID = '1' | '2' | '3' | '4' | '5' | '6'
+    const addFormTokens = (_body: typeof body, operationID: operationID): typeof body => {
+      
+      type TypeMap = { [key in typeof operationID]: keyof Omit<typeof accountInfo, 'root'> }
+      const operationCode: TypeMap[typeof operationID] = {
+        '_1': 'addCard',
+        '_2': 'delCard',
+        '_3': 'delCard',
+        '_4': 'balance',
+        '_5': 'balance',
+        '_6': 'balance',
+      }['_' + operationID] as TypeMap[typeof operationID]
+      const pid = accountInfo[operationCode].pid
+      const token = accountInfo[operationCode].token
+      _body.pid = String(pid)
+      _body[token] = '1'
+      return _body
+    }
+
     const response = await this.fetch('https://s-otk.ru/index.php/index.php?option=com_ajax&module=lkabinet&format=json', {
       method: 'POST',
-      body: new URLSearchParams(body)
+      body: new URLSearchParams(addFormTokens(body, body['operation'] as operationID))
     })
 
     const responseText = (await response.text()).trim()

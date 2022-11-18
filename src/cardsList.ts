@@ -30,8 +30,6 @@ export async function getCardInfo(this: SOTKBase, cardID): Promise<CardInfo> {
   const cardInfoResponse = await this.runJSONOperation({
     operation: '6',
     card: cardID,
-    [balance.token]: '1',
-    pid: String(balance.pid)
   })
   return cardInfoResponse.data as CardInfo
 }
@@ -45,8 +43,6 @@ export async function addCard(this: SOTKBase, cardID: string) {
   const cardAdded = await this.runJSONOperation({
     operation: '1',
     card: cardID,
-    [addCard.token]: '1',
-    pid: String(addCard.pid)
   })
   const success = new RegExp(`^Карта ${cardID} прикреплена$`).test(cardAdded.data)
   if(!success) throw new Error(`Couldn\'t add a new SOTK card due to the following reason: ${cardAdded.data}`)
@@ -59,9 +55,7 @@ export async function deleteCard(this: SOTKBase, cardID) {
 
   const cardDeletion = await this.runJSONOperation({
     operation: '2',
-    card: cardID,
-    [delCard.token]: '1',
-    pid: String(delCard.pid)
+    card: cardID
   })
   const success = cardDeletion.data === 'Функция базы данных сработала без ошибок'
   if(!success) throw new Error(`Couldn\'t delete a SOTK card due to the following reason: ${cardDeletion.data}`)

@@ -4,9 +4,16 @@ import type { CardInfo } from '../src/cardsList'
 
 const SOTK = new SOTKAPI()
 
-const testLogin = false
+const testLogin = true
 describe('Logs in', () => {
   if(testLogin) {
+    test('tries to logout without session', async () => {
+      await expect(
+        SOTK.logout()
+      ).rejects.toMatchObject({
+        message: 'Must be logged into account in order to logout'
+      })
+    })
     test('tries to login with invalid password', async () => {
       await expect(
         SOTK.login({
@@ -74,6 +81,9 @@ describe('Cards list operations', () => {
       expect(typeof card.number).toBe('string')
       expect(card.number).toBeTruthy()
       await checkCard(await card.getInfo(), card.number)
+      
+      const history = await card.getHistory()
+      expect(Array.isArray(history)).toBe(true)
     }
   }, 20000)
 
